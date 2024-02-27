@@ -10,7 +10,73 @@ public class TicTacToe {
     private Character currentMark = 'X'; // Marque actuelle du joueur
     private boolean isGameOver = false; // Indique si le jeu est terminé
 
-    // Méthode pour effectuer un coup sur le plateau de jeu
+    // Version 0 - Méthode pour vérifier les axes avant de jouer
+    public void playV0(int x, int y) {
+        verifyAxis(x, 0);
+        verifyAxis(y, 1);
+    }
+
+    // Version 1 - Méthode pour placer un pion avec spécification du joueur
+    public void playV1(int x, int y, char pion) {
+        verifyAxis(x, 0);
+        verifyAxis(y, 1);
+        placerPion(x, y, pion);
+    }
+
+    // Version 2 - Méthode pour vérifier que X joue en premier
+    public void playV2(int x, int y, char pion) {
+        verifXFirst(pion);
+        verifyAxis(x, 0);
+        verifyAxis(y, 1);
+        placerPion(x, y, pion);
+    }
+
+    // Version 3 - Méthode pour changer de joueur après chaque coup
+    public void playV3(int x, int y, char pion) {
+        verifyAxis(x, 0);
+        verifyAxis(y, 1);
+        switchPlayer();
+        placerPion(x, y, pion);
+    }
+
+    // Version 4 - Méthode pour jouer et retourner le résultat (gagnant ou null)
+    public Character playV4(int x, int y, char pion) {
+        verifyAxis(x, 0);
+        verifyAxis(y, 1);
+        switchPlayer();
+        placerPion(x, y, pion);
+        return getWinner();
+    }
+
+    // Version 5 - Méthode pour jouer et retourner le résultat (gagnant ou null)
+    public Character playV5(int x, int y, char pion) {
+        verifyAxis(x, 0);
+        verifyAxis(y, 1);
+        switchPlayer();
+        placerPion(x, y, pion);
+        return getWinner();
+    }
+
+    // Méthode pour vérifier si X joue en premier, sinon lance une exception
+    public void verifXFirst(char pion) {
+        if (!isGameOver) {
+            if (pion != 'X') {
+                throw new RuntimeException("X must play first.");
+            }
+        }
+    }
+
+    // Méthode pour placer un pion sur le plateau de jeu
+    public void placerPion(int x, int y, char pion) {
+        // Vérifie si la cellule est déjà occupée
+        if (board[x - 1][y - 1] != '0') {
+            throw new RuntimeException("Cell is occupied");
+        }
+        board[x - 1][y - 1] = currentMark;
+        switchPlayer(); // Passe au joueur suivant
+    }
+
+    // Méthode principale pour effectuer un coup sur le plateau de jeu
     public Character[][] play(int x, int y) {
         if (isGameOver) {
             throw new RuntimeException("Game is over");
@@ -18,13 +84,9 @@ public class TicTacToe {
         verifyAxis(x, 0);
         verifyAxis(y, 1);
 
-        // Vérifie si la cellule est déjà occupée
-        if (board[x - 1][y - 1] != '0') {
-            throw new RuntimeException("Cell is occupied");
-        }
-        board[x - 1][y - 1] = currentMark;
+        // Place le pion du joueur actuel sur le plateau
+        placerPion(x, y, currentMark);
         getWinner(); // Vérifie s'il y a un gagnant après le coup
-        switchPlayer(); // Passe au joueur suivant
         return board;
     }
 
