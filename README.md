@@ -4,7 +4,7 @@
 
 ## Description
 
-Un simple jeu de Morpion (Tic Tac Toe) implémenté en Java avec JavaFX pour l'interface graphique et JUnit pour les tests unitaires.
+Un simple jeu de X/O (Tic Tac Toe) implémenté en Java avec JavaFX pour l'interface graphique et JUnit pour les tests unitaires.
 
 ## Comment exécuter le projet
 
