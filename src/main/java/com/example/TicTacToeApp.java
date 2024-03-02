@@ -56,8 +56,9 @@ public class TicTacToeApp extends Application {
     // Gestionnaire d'événement pour le clic sur un bouton
     private void handleButtonClick(int x, int y) {
         try {
-            buttons[x][y].setText(ticTacToe.getCurrentPlayer().toString());
+            Character currentPlayer = ticTacToe.getCurrentPlayer();
             ticTacToe.play(x + 1, y + 1);
+            buttons[x][y].setText(currentPlayer.toString());
             checkWinner();
         } catch (RuntimeException ex) {
             showAlert("Coup invalide", ex.getMessage());

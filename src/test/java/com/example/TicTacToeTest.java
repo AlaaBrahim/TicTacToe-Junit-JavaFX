@@ -1,188 +1,135 @@
 package com.example;
 
-import static org.junit.Assert.*;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-
-import org.junit.Rule;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestInstance.Lifecycle;
 
 /**
  * Unit test for simple App.
  */
+@TestInstance(Lifecycle.PER_CLASS)
 public class TicTacToeTest {
-    TicTacToe ticTacToe;
 
-    @Before
+    private TicTacToe ticTacToe;
+
+    @BeforeEach
     public void setUp() {
         ticTacToe = new TicTacToe();
     }
 
-    @Rule
-    public ExpectedException exception = ExpectedException.none();
-
     @Test
     public void whenXOutsideBoardThanRuntimeException() {
-        exception.expect(RuntimeException.class);
-        exception.expectMessage("X is outside board");
-        ticTacToe.play(5, 2);
+        Exception exception = assertThrows(RuntimeException.class, () -> ticTacToe.play(5, 2));
+        assertEquals("X is outside board", exception.getMessage());
     }
 
     @Test
     public void whenYOutsideBoardThanRuntimeException() {
-        exception.expect(RuntimeException.class);
-        exception.expectMessage("Y is outside board");
-        ticTacToe.play(2, 5);
+        Exception exception = assertThrows(RuntimeException.class, () -> ticTacToe.play(2, 5));
+        assertEquals("Y is outside board", exception.getMessage());
     }
 
     @Test
     public void whenXYInsideBoardThanNothing() {
-        ticTacToe.play(1, 1);
+        assertDoesNotThrow(() -> ticTacToe.play(1, 1));
     }
 
     @Test
     public void whenOccupiedThanRuntimeException() {
         ticTacToe.play(2, 1);
-        exception.expect(RuntimeException.class);
-        ticTacToe.play(2, 1);
+        assertThrows(RuntimeException.class, () -> ticTacToe.play(2, 1));
     }
 
     @Test
     public void checkFirstPlayerIsX() {
-        assertEquals((Character) 'X', ticTacToe.getCurrentPlayer());
+        assertEquals('X', ticTacToe.getCurrentPlayer());
     }
 
     @Test
     public void checkNextPlayerIsO() {
         ticTacToe.play(1, 1);
-        assertEquals((Character) 'O', ticTacToe.getCurrentPlayer());
+        assertEquals('O', ticTacToe.getCurrentPlayer());
     }
 
     @Test
     public void checkNextPlayerIsX() {
         ticTacToe.play(1, 1);
         ticTacToe.play(2, 1);
-        assertEquals((Character) 'X', ticTacToe.getCurrentPlayer());
+        assertEquals('X', ticTacToe.getCurrentPlayer());
     }
 
     @Test
     public void checkIsBoardFull() {
-        ticTacToe.play(1, 1);
-        ticTacToe.play(1, 2);
-        ticTacToe.play(1, 3);
-        ticTacToe.play(2, 1);
-        ticTacToe.play(2, 3);
-        ticTacToe.play(2, 2);
-        ticTacToe.play(3, 1);
-        ticTacToe.play(3, 3);
-        ticTacToe.play(3, 2);
+        playMoves(ticTacToe, 1, 1, 1, 2, 1, 3, 2, 1, 2, 3, 2, 2, 3, 1, 3, 3, 3, 2);
         assertTrue(ticTacToe.isBoardFull());
     }
 
     @Test
     public void checkIsGameOver() {
-        ticTacToe.play(1, 1);
-        ticTacToe.play(1, 2);
-        ticTacToe.play(2, 1);
-        ticTacToe.play(2, 2);
-        ticTacToe.play(3, 1);
+        playMoves(ticTacToe, 1, 1, 1, 2, 2, 1, 2, 2, 3, 1);
         assertTrue(ticTacToe.isGameOver());
     }
 
     @Test
     public void checkHorizontalWin() {
-        ticTacToe.play(1, 1);
-        ticTacToe.play(1, 2);
-        ticTacToe.play(2, 1);
-        ticTacToe.play(2, 2);
-        assertEquals((Character) 'X', ticTacToe.play(3, 1)[0][0]);
-        assertEquals((Character) 'X', ticTacToe.getWinner());
+        playMoves(ticTacToe, 1, 1, 1, 2, 2, 1, 2, 2, 3, 1);
+        assertEquals('X', ticTacToe.getWinner());
     }
 
     @Test
     public void checkVerticalWin() {
-        ticTacToe.play(1, 1);
-        ticTacToe.play(2, 1);
-        ticTacToe.play(1, 2);
-        ticTacToe.play(2, 2);
-        assertEquals((Character) 'X', ticTacToe.play(1, 3)[0][0]);
-        assertEquals((Character) 'X', ticTacToe.getWinner());
+        playMoves(ticTacToe, 1, 1, 2, 1, 1, 2, 2, 2, 1, 3);
+        assertEquals('X', ticTacToe.getWinner());
     }
 
     @Test
     public void checkDiagonalWin() {
-        ticTacToe.play(1, 1);
-        ticTacToe.play(2, 1);
-        ticTacToe.play(2, 2);
-        ticTacToe.play(3, 1);
-        assertEquals((Character) 'X', ticTacToe.play(3, 3)[0][0]);
-        assertEquals((Character) 'X', ticTacToe.getWinner());
+        playMoves(ticTacToe, 1, 1, 2, 1, 2, 2, 3, 1, 3, 3);
+        assertEquals('X', ticTacToe.getWinner());
     }
 
     @Test
     public void checkNoWinner() {
-        ticTacToe.play(1, 1);
-        ticTacToe.play(2, 1);
-        ticTacToe.play(1, 2);
-        ticTacToe.play(2, 2);
-        ticTacToe.play(3, 1);
+        playMoves(ticTacToe, 1, 1, 2, 1, 1, 2, 2, 2, 3, 1);
         assertFalse(ticTacToe.isGameOver());
         assertNull(ticTacToe.getWinner());
     }
 
     @Test
     public void checkNoWinnerFullBoard() {
-        ticTacToe.play(1, 1);
-        ticTacToe.play(1, 2);
-        ticTacToe.play(1, 3);
-        ticTacToe.play(2, 1);
-        ticTacToe.play(2, 3);
-        ticTacToe.play(2, 2);
-        ticTacToe.play(3, 1);
-        ticTacToe.play(3, 3);
-        ticTacToe.play(3, 2);
+        playMoves(ticTacToe, 1, 1, 1, 2, 1, 3, 2, 1, 2, 3, 2, 2, 3, 1, 3, 3, 3, 2);
         assertTrue(ticTacToe.isBoardFull());
         assertTrue(ticTacToe.isGameOver());
-        assertEquals((Character) '0', ticTacToe.getWinner());
+        assertEquals('0', ticTacToe.getWinner());
     }
 
     @Test
     public void checkResetGame() {
-        ticTacToe.play(1, 1);
-        ticTacToe.play(1, 2);
-        ticTacToe.play(1, 3);
-        ticTacToe.play(2, 1);
-        ticTacToe.play(2, 3);
-        ticTacToe.play(2, 2);
-        ticTacToe.play(3, 1);
-        ticTacToe.play(3, 3);
-        ticTacToe.play(3, 2);
+        playMoves(ticTacToe, 1, 1, 1, 2, 1, 3, 2, 1, 2, 3, 2, 2, 3, 1, 3, 3, 3, 2);
         ticTacToe.resetGame();
         assertFalse(ticTacToe.isGameOver());
         assertFalse(ticTacToe.isBoardFull());
         assertNull(ticTacToe.getWinner());
-        assertEquals((Character) 'X', ticTacToe.getCurrentPlayer());
-
+        assertEquals('X', ticTacToe.getCurrentPlayer());
     }
 
     @Test
     public void checkResetGameBoard() {
-        ticTacToe.play(1, 1);
-        ticTacToe.play(1, 2);
-        ticTacToe.play(1, 3);
-        ticTacToe.play(2, 1);
-        ticTacToe.play(2, 3);
-        ticTacToe.play(2, 2);
-        ticTacToe.play(3, 1);
-        ticTacToe.play(3, 3);
-        ticTacToe.play(3, 2);
+        playMoves(ticTacToe, 1, 1, 1, 2, 1, 3, 2, 1, 2, 3, 2, 2, 3, 1, 3, 3, 3, 2);
         ticTacToe.resetGame();
+        Character[][] board = ticTacToe.getBoard();
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
-                assertEquals((Character) '0', ticTacToe.getBoard()[i][j]);
+                assertEquals('0', board[i][j]);
             }
         }
     }
 
+    private void playMoves(TicTacToe ticTacToe, int... moves) {
+        for (int i = 0; i < moves.length; i += 2) {
+            ticTacToe.play(moves[i], moves[i + 1]);
+        }
+    }
 }
